@@ -159,6 +159,57 @@ function handleShiftOperation(operation) {
   updateDisplay();
 }
 
+function handleAction(action) {
+    switch (action) {
+        case 'clear':
+            currentInput = '0';
+            actionSelected = false;
+            operator = null;
+            previousInput = '';
+            updateDisplay();
+            break;
+        case 'equals':
+            if (operator && previousInput) {
+                const result = calculate();
+                currentInput = result;
+                operator = null;
+                previousInput = '';
+                actionSelected = true;
+                updateDisplay();
+            }
+            break;
+    }
+}
+function calculate() {
+    const prev = parseFloat(previousInput);
+    const current = parseFloat(currentInput);
+
+    switch (operator) {
+        case 'add':
+            return (prev + current).toString();
+        case 'subtract':
+            return (prev - current).toString();
+        case 'multiply':
+            return (prev * current).toString();
+        case 'divide':
+            return current !== 0 ? (prev / current).toString() : 'Error';
+        default:
+            return currentInput;
+    }
+}
+function factorial(n) {
+    if (n < 0) return 'Error';
+    if (n === 0 || n === 1) return 1;
+    if (n > 170) return 'Error'; 
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+
+
 function updateDisplay() {
   display.textContent = currentInput || "0";
 }
