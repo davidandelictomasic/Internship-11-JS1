@@ -23,12 +23,13 @@ const buttonData = [
   { id: "equals", label: "=", type: "action" },
   { id: "clear", label: "C", type: "action" },
 ];
-
+const display = document.querySelector(".display");
 const buttonsContainer = document.querySelector(".buttons");
 
 let currentInput = "0";
 let operator = null;
 let previousInput = "";
+let actionSelected = false;
 let isCalculatorOn = true;
 
 function generateButtons() {
@@ -83,6 +84,38 @@ function handleSpecial(special) {
       break;
   }
 }
+function handleNumber(value) {
+  if (actionSelected) {
+    currentInput = value;
+    actionSelected = false;
+  } else {
+    currentInput = currentInput === "0" ? value : currentInput + value;
+  }
+  updateDisplay();
+}
+
+function handleOperation(operation) {
+  switch (operation) {
+    case "square":
+      const num = parseFloat(currentInput);
+      currentInput = (num ** 2).toString();
+      actionSelected = true;
+      break;
+    case "divide":
+    case "multiply":
+    case "add":
+    case "subtract":
+      previousInput = currentInput;
+      operator = operation;
+      actionSelected = true;
+      break;
+  }
+  updateDisplay();
+}
+
+function updateDisplay() {
+  display.textContent = currentInput || "0";
+}
 
 function toggleCalculator() {
   isCalculatorOn = !isCalculatorOn;
@@ -91,6 +124,8 @@ function toggleCalculator() {
     currentInput = "";
     previousInput = "";
     operator = null;
+    actionSelected = false;
+    display.textContent = "";
 
     document.querySelectorAll(".button").forEach((btn) => {
       if (btn.id !== "onoff") {
@@ -99,6 +134,7 @@ function toggleCalculator() {
     });
   } else {
     currentInput = "0";
+    updateDisplay();
 
     document.querySelectorAll(".button").forEach((btn) => {
       btn.style.opacity = "1";
@@ -107,3 +143,4 @@ function toggleCalculator() {
 }
 
 generateButtons();
+updateDisplay();
