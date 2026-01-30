@@ -10,6 +10,28 @@
     <div class="calculator">
       <div class="display" id="display">0</div>
       <div class="buttons"></div>
+     
+      <button id="toggle-history-btn" type="button" class="toggle-history-btn">Show History</button>
+      <div id="history-panel" style="display:none;">
+        <div class="history-controls">
+          <label for="history-op-filter">Filter:</label>
+          <select id="history-op-filter">
+            <option value="">All</option>
+            <option value="+">+</option>
+            <option value="−">−</option>
+            <option value="×">×</option>
+            <option value="÷">÷</option>
+            <option value="x²">x²</option>
+            <option value="!">!</option>
+            <option value="x³">x³</option>
+            <option value="log">log</option>
+            <option value="√x">√x</option>
+            <option value="³√x">³√x</option>
+          </select>
+          <input id="history-text-filter" type="text" placeholder="Search..." />
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </div>
     </div>
 
     <script src="/assets/script.js"></script>
