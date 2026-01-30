@@ -31,6 +31,7 @@ let operator = null;
 let previousInput = "";
 let actionSelected = false;
 let isCalculatorOn = true;
+let isShiftMode = false;
 
 function generateButtons() {
   buttonsContainer.innerHTML = "";
@@ -40,11 +41,14 @@ function generateButtons() {
     button.className = "button";
     button.id = btnData.id;
 
-    if (btnData.type === "number") {
+    if (isShiftMode && btnData.shiftLabel) {
+      button.textContent = btnData.shiftLabel;
+    } else if (btnData.type === "number") {
       button.textContent = btnData.value;
     } else {
       button.textContent = btnData.label;
     }
+
     button.addEventListener("click", () => handleButtonClick(btnData));
     buttonsContainer.appendChild(button);
   });
@@ -74,6 +78,7 @@ function handleButtonClick(btnData) {
 function handleSpecial(special) {
   switch (special) {
     case "shift":
+      isShiftMode = !isShiftMode;
       generateButtons();
       break;
     case "history":
@@ -95,6 +100,14 @@ function handleNumber(value) {
 }
 
 function handleOperation(operation) {
+  if (isShiftMode) {
+    handleShiftOperation(operation);
+  } else {
+    handleNormalOperation(operation);
+  }
+}
+
+function handleNormalOperation(operation) {
   switch (operation) {
     case "square":
       const num = parseFloat(currentInput);
@@ -110,6 +123,39 @@ function handleOperation(operation) {
       actionSelected = true;
       break;
   }
+  updateDisplay();
+}
+
+function handleShiftOperation(operation) {
+  const num = parseFloat(currentInput);
+  let result;
+  let opSymbol;
+
+  switch (operation) {
+    case "square":
+      result = factorial(num);
+      opSymbol = "!";
+      break;
+    case "divide":
+      result = num ** 3;
+      opSymbol = "x³";
+      break;
+    case "multiply":
+      result = num > 0 ? Math.log10(num) : "Error";
+      opSymbol = "log";
+      break;
+    case "subtract":
+      result = num >= 0 ? Math.sqrt(num) : "Error";
+      opSymbol = "√x";
+      break;
+    case "add":
+      result = Math.cbrt(num);
+      opSymbol = "³√x";
+      break;
+  }
+
+  currentInput = result.toString();
+  actionSelected = true;
   updateDisplay();
 }
 
