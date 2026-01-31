@@ -26,8 +26,35 @@ const buttonData = [
 const display = document.querySelector(".display");
 const buttonsContainer = document.querySelector(".buttons");
 const opFilter = document.querySelector("#history-op-filter");
+const textFilter = document.querySelector("#history-text-filter");
 const toggleBtn = document.querySelector("#toggle-history-btn");
 const historyPanel = document.querySelector("#history-panel");
+
+const operatorSearchMap = {
+  add: "+",
+  plus: "+",
+  sum: "+",
+  subtract: "−",
+  sub: "−",
+  minus: "−",
+  multiply: "×",
+  mul: "×",
+  times: "×",
+  divide: "÷",
+  div: "÷",
+  square: "x²",
+  squared: "x²",
+  factorial: "!",
+  cube: "x³",
+  cubed: "x³",
+  log: "log",
+  logarithm: "log",
+  sqrt: "√x",
+  root: "√x",
+  squareroot: "√x",
+  cuberoot: "³√x",
+  cbrt: "³√x",
+};
 
 let currentInput = "0";
 let operator = null;
@@ -225,6 +252,7 @@ function toggleHistory() {
 }
 
 opFilter.addEventListener("change", renderHistoryList);
+textFilter.addEventListener("input", renderHistoryList);
 
 toggleBtn.addEventListener("click", () => {
   if (!isCalculatorOn) return;
@@ -236,9 +264,22 @@ toggleBtn.addEventListener("click", () => {
 
 function renderHistoryList() {
   const opValue = opFilter ? opFilter.value : "";
+  const textValue = textFilter ? textFilter.value.toLowerCase().trim() : "";
   let filtered = history;
+
   if (opValue) {
     filtered = filtered.filter((h) => h.operation === opValue);
+  }
+
+  if (textValue) {
+    filtered = filtered.filter((h) => {
+      for (const key in operatorSearchMap) {
+        if (key.startsWith(textValue) && operatorSearchMap[key] === h.operation) {
+          return true;
+        }
+      }
+      return false;
+    });
   }
   const list = document.getElementById("history-list");
   if (!filtered.length) {
@@ -302,10 +343,13 @@ function toggleCalculator() {
     list.innerHTML = "";
     toggleBtn.textContent = "Show History";
     isHistoryVisible = false;
+    opFilter.value = "";
+    textFilter.value = "";
     opFilter.disabled = true;
+    textFilter.disabled = true;
     toggleBtn.disabled = true;
 
-    display.textContent = "";    
+    display.textContent = "";
 
     document.querySelectorAll(".button").forEach((btn) => {
       if (btn.id !== "onoff") {
@@ -316,6 +360,7 @@ function toggleCalculator() {
     currentInput = "0";
     updateDisplay();
     opFilter.disabled = false;
+    textFilter.disabled = false;
     toggleBtn.disabled = false;
 
     document.querySelectorAll(".button").forEach((btn) => {
